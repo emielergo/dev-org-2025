@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>Sales Invoice Line Base FLS</label>
+    <!-- Add read/edit permissions for other standard/custom fields on Sales Invoice Line as needed -->
+    <hasActivationRequired>false</hasActivationRequired>
+</PermissionSet> 

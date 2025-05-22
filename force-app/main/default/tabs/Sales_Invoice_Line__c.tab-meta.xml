@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomTab xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customObject>true</customObject>
+    <description>Tab for Sales Invoice Line Object</description>
+    <label>Sales Invoice Lines</label>
+    <motif>Custom38: Currency</motif> <!-- Example motif, choose a relevant one -->
+</CustomTab> 

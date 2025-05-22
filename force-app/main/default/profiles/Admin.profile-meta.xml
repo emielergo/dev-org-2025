@@ -810,4 +810,12 @@
         <tab>Case_Contact_Relation__c</tab>
         <visibility>DefaultOn</visibility>
     </tabVisibilities>
+    <tabVisibilities>
+        <tab>Sales_Invoice__c</tab>
+        <visibility>DefaultOn</visibility>
+    </tabVisibilities>
+    <tabVisibilities>
+        <tab>Sales_Invoice_Line__c</tab>
+        <visibility>DefaultOn</visibility>
+    </tabVisibilities>
 </Profile>

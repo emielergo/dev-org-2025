@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Sales_Invoice__c</fullName>
+    <label>Sales Invoice</label>
+    <referenceTo>Sales_Invoice__c</referenceTo>
+    <relationshipLabel>Sales Invoice Lines</relationshipLabel>
+    <relationshipName>Sales_Invoice_Lines</relationshipName>
+    <relationshipOrder>0</relationshipOrder>
+    <reparentableMasterDetail>false</reparentableMasterDetail>
+    <writeRequiresMasterRead>true</writeRequiresMasterRead>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>MasterDetail</type>
+</CustomField> 

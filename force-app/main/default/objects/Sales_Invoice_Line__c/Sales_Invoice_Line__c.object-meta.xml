@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>Sales Invoice Line</label>
+    <pluralLabel>Sales Invoice Lines</pluralLabel>
+    <nameField>
+        <label>Sales Invoice Line Number</label>
+        <type>AutoNumber</type>
+        <displayFormat>SIL-{00000000}</displayFormat>
+        <startingNumber>0</startingNumber>
+    </nameField>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <sharingModel>ControlledByParent</sharingModel> <!-- Due to Master-Detail relationship -->
+    <enableActivities>false</enableActivities>
+    <enableReports>true</enableReports>
+    <enableHistory>true</enableHistory>
+    <enableSearch>true</enableSearch>
+    <searchLayouts>
+        <searchResultsAdditionalFields>Sales_Invoice__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>LAST_UPDATE</searchResultsAdditionalFields>
+        <lookupDialogsAdditionalFields>Sales_Invoice__c</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>LAST_UPDATE</lookupDialogsAdditionalFields>
+        <searchFilterFields>NAME</searchFilterFields>
+        <searchFilterFields>Sales_Invoice__c</searchFilterFields> <!-- Search by parent invoice number -->
+    </searchLayouts>
+    <compactLayoutAssignment>Sales_Invoice_Line_Compact_Layout</compactLayoutAssignment>
+    <compactLayouts>
+        <fullName>Sales_Invoice_Line_Compact_Layout</fullName>
+        <label>Sales Invoice Line Compact Layout</label>
+        <fields>Name</fields>
+        <fields>Sales_Invoice__c</fields>
+    </compactLayouts>
+</CustomObject> 
