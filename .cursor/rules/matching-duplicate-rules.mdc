@@ -1,0 +1,23 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+
+
+Creation of Matching Rules and Duplicate Rules
+
+The Name of the Matching Rule should always start with the Object-Name, followed by the Field-Name(s).
+E.g. “Supplier Relationship Unique Key” or “Contact Name and Email or Mobile or Address”.
+
+Remember when selecting a Lookup or Master-Detail Field in the Matching Rule, not the ID but the Name of the parent-record is matched. To prevent confusion and mistakes, refrain from using Lookup or Master-Detail Fields in Matching Rules. Instead, create a Custom Field (e.g. “Unique Key”) of Field-type “Text” in which the ID of the parent-record is copied via an Apex Trigger. Additionally, it is not possible to use more than one relationship field in a single Matching Rule. Using the same approach, multiple fields can be combined into a single “Unique Key” field.
+
+Choose the same Name for the Duplicate Rule as for the Matching Rule. Unless of course the Duplicate Rules combines multiple Matching Rules.
+
+Always (almost) choose “Bypass sharing rules” instead of “Enforce sharing rules”. This is not selected by default! Otherwise duplicates can still be created due to hidden records.
+
+
+
+
+
+Make sure to enter a thorough Alert Text. The default Alert Text is not sufficient.

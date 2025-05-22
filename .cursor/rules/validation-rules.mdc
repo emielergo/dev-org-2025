@@ -1,0 +1,765 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+
+
+Creation of Validation Rules - lots!
+
+Validation Rules are a critical part of a Salesforce-implementation. They impact the project in a large way to increase quality and success!
+
+Firstly Validation Rules should be implemented to ensure the end-User enters all the required data, and in a correct manner.
+Otherwise the application cannot be used properly.
+
+
+Secondly Validation Rules should be implemented to increase the data quality.
+At first sight some Fields shouldn’t really be required or validated. However take the time to analyse which Fields increase the overall data-quality of the application. It can have a huge impact on the success of the project to put Validation Rules in place to ensure the validity of these fields.
+
+In the long-run much better Reports and Dashboards can be created for management to make proper decisions and thus have successful and happy customers!
+
+
+Lastly Validation Rules should be implemented to ensure the data-integrity of the application.
+Both for data which can be modified by the end-User, but also to test for invalid data which is modified automatically by code via e.g. Triggers or Batches or by data-integrations.
+
+Implementing these Validation Rules proactively can have a large impact on the required support for the customer after the project is delivered. Bugs which would only be discovered after many months of use can be avoided this way.
+
+A lot of time will be spent on Validation Rules for complex projects.
+
+
+Create Validation Rules - general guidelines
+
+General conventions
+
+Choose a sensible “Error Location”
+
+Always select a specific Field for the “Error Location” if possible. It’s much more user-friendly to see on what field the error applies, instead of just seeing the error near the Save-button.
+
+ 
+
+One Validation Rule should perform one check, not multiple
+
+When multiple validations/checks are necessary on a single Object, do not combine these checks in a single Validation Rule.
+This is not helpful for the user.
+Instead a Validation Rule should only perform a single check, thus only test a single field.
+Then the user will immediately know what’s wrong with the input, instead of having to figure it out themselves.
+
+Only when the Object Limit of 100 Validation Rules is reached it should be considered to merge multiple Validation Rules, by using the OR-operator. Keep in mind to describe the Error Message as detailed as possible.
+
+ 
+
+Don’t use obsolete punctuation in the Error Message
+
+Do not end the Error Message for a Validation Rule with a point or exclamation mark. Except when the Error Message consists of multiple sentences.
+
+ 
+
+Validate existing data before activating a new Validation Rule
+
+When implementing a new Validation Rule on an object which has already been in use in production, the existing records should be validated up-front!
+Otherwise users will receive errors on data which they haven’t even modified.
+This can be done quickly by adding a temporary checkbox formula-field. Then create a List View or Report which is filtered on that checkbox-field.
+
+ 
+
+Be mindful of Validation Rules which reference a parent-field
+
+When creating a Validation Rule which references a field of a parent, be mindful about the value of that parent-field. When it’s possible for that field to change (it’s not read-only or immutable), an Apex Trigger should be coded on the parent-object to validate the related records when that field changes. This can be achieved by fetching and immediately updating these child-records.
+
+Formula conventions
+
+To improve code-readability - yes formulas are also “code” - certain conventions must be applied. These conventions not only apply for Validation Rules, but also for Formula-Fields, Workflow-Rules, Process Builder, ..
+
+
+Use single quotes instead of double quotes for text-literals
+
+Very straight-forward, but to achieve clean and readable formulas always use the same technique to quote text-values. There’s no real advantage to either, but single quotes are preferred.
+
+ 
+
+Use “==” instead of “=” for equality comparisons
+
+Formulas are interpreted the same either way, however in actual code they mean very different things. As to not confuse anyone, just stick to using double equals for comparisons.
+
+ 
+
+Use “!=” instead of “<>” for inequality comparisons
+
+By convention always use “!=” instead of “<>” to compare values.
+
+ 
+
+Watch the spaces
+
+There’s also no real advantage to using less or more spaces, except for a cleaner formula-code. So watch out as to not use obsolete spaces for example before/after functions or parentheses.
+
+Avoid using the “Insert Field/Operator/Function” since those add a lot of obsolete spaces. It should not be that hard to memorize the most common ones.
+
+Also watch out to not “double-space”.
+
+ 
+
+Always use capitals for functions
+
+To improve readability always enter functions in capitals. E.g. use “ISBLANK(XxxXxx)” instead of “IsBlank(XxxXxx)”.
+
+ 
+
+One line equals one expression/function
+
+Again, to achieve more human-readable formulas use a separate line for each function/expression. This might seem like overkill for a simple formula with just 2 expressions. However Validation Rules often expand over time. When the complexity increases, everyone will be happy with readable formulas.
+
+Also place parentheses on separate lines e.g. for an IF-function or to combine OR-expressions.
+
+
+Use && instead of AND(), use || instead of OR()
+
+This is down to personal preference, but formulas are often much more readable when using the boolean expressions instead of the AND/OR-functions.
+
+Always put the “&&” / ”||” at the end of the line.
+
+ 
+
+Use ! instead of NOT()
+
+Similarly as the previous convention, this is down to personal preference, but formulas are a lot shorter and readable when using the exclamation mark as a NOT-operator, instead of the NOT-function.
+
+Also never compare against “true” or “false” in an expression, obviously!
+
+ 
+
+Use “+” for string-concatenation instead of “&”
+
+By convention and to avoid confusion with the AND-operator always use a “+” instead of a “&” to concatenate strings.
+
+ 
+
+Use indentation (2 spaces) inside of parentheses
+
+For either functions which span multiple lines - for example an IF-function - or for boolean expressions which are combined through parentheses.
+Always use indentation to improve the readability of the formula.
+2 spaces is just right for 1 level of indentation, 4 spaces for 2 levels of indentation, 6 for 3, etc.
+
+ 
+
+Use ISPICKVAL() instead of TEXT() to check Picklist-values
+
+Self-explanatory.
+
+ 
+
+Use ISBLANK() instead of ISNULL() to check empty values
+
+ISNULL() is semi-deprecated. ISBLANK() supports more field-types.
+
+ 
+
+Use INCLUDES() instead of CONTAINS() to check Multi-select Picklist-values
+
+Self-explanatory.
+
+
+Creation of Validation Rules - common use cases
+
+Required
+
+A lot of fields aren’t required at all times, but are required based on a certain condition. Always take the time to think whether a field is required conditionally and create the Validation Rule appropriately.
+Most obvious use cases are Fields which are required before the record can be updated to the following Stage/Status. That way the User is guided into which fields to enter.
+
+Some examples:
+
+
+Opportunity.Closed_Lost_Reason_Required
+
+This example is very common and is the first kind of Validation Rule described in the first page of this chapter.
+
+Formula
+
+
+
+ISPICKVAL(Closed_Lost_Reason__c, '') &&
+IsClosed &&
+!IsWon
+Error Message
+
+Closed Lost Reason is required when the Opportunity is Lost
+
+ 
+
+Sales_Unit__c.Agreement_Customer_Signed_Date_Required
+
+This example is something which could be overlooked since it’s more complicated, it’s the second kind of Validation Rule. Implementing this Validation Rule will definitely improve data quality.
+
+Formula
+
+
+
+ISBLANK(Agreement_Customer_Signed_Date__c) &&
+!ISPICKVAL(Stage__c, 'Available') &&
+!ISPICKVAL(Stage__c, 'In Reservation') &&
+ISBLANK(Main_Sales_Unit__c)
+Error Message
+
+Agreement Customer Signed Date is required when the Sales Unit is not in the Stages "Available" or "In Reservation"
+
+ 
+
+Lead.Referral_Contact_Required
+
+This example is somewhere in between the first and second kind of Validation Rule. It shouldn’t necessarily be required for the application the function properly, but definitely improves data quality.
+
+Formula
+
+
+
+ISBLANK(Referral_Contact__c) &&
+(
+  ISPICKVAL(LeadSource, 'Employee Referral') ||
+  ISPICKVAL(LeadSource, 'External Referral')
+)
+Error Message
+
+Referral Contact is required when Lead Source is Employee Referral or External Referral
+
+ 
+
+Sales_Invoice__c.Number_of_Sales_Invoice_Lines_Required
+
+This is a special example since it involves a Roll-up Summary which has been created solely for the ability to implement this Validation Rule. It’s in between the second and third kind of Validation Rule. It could easily be overlooked to implement this, since it’s expected for a User to add Invoice Lines before setting the Invoice itself Definite, but never rely on the User!
+
+Formula
+
+
+
+Number_of_Sales_Invoice_Lines__c <= 0 &&
+ISPICKVAL(Status__c, 'Definite')
+Error Message
+
+At least 1 Sales Invoice Line is required for a Definite Sales Invoice
+
+ 
+
+Sales_Invoice__c.OGM_Required
+
+This example is the third type of Validation Rule. The OGM is calculated via an Apex Trigger, but it’s a good practice to still test the Field just to make sure and avoid bugs.
+
+Formula
+
+
+
+ISBLANK(OGM__c) &&
+ISPICKVAL(Status__c, 'Definite')
+Error Message
+
+OGM is required for a Definite Sales Invoice
+
+ 
+
+Sales_Unit__c.Stage_Required
+
+This is a special example since it requires the Stage-field unconditionally. However this Validation Rule is put in place because the field cannot be set “Required” on Field-level. This can be the case because for example the Field is entered via automation, or because the field should be read-only for certain Users (a required field cannot be set read-only).
+
+Formula
+
+
+
+ISPICKVAL(Stage__c, '')
+Error Message
+
+Stage is required
+
+ 
+
+Obsolete
+
+The opposite of “Required” is “Obsolete” to increase data quality sometimes specific fields really should be empty when the record is in a certain state.
+
+Having these fields empty will help to create sensible Reports/Dashboards. Otherwise the data could be confusing or misinterpreted.
+This will also help to avoid bugs in business logics which depend on these fields.
+
+It’s also a possibility to clear certain Fields automatically for example when the Stage is changed from “Closed Lost” to another value. This can be achieved via an Apex Trigger.
+
+Some examples:
+
+
+Opportunity.Closed_Lost_Reason_Obsolete
+
+Similarly as the previous “Required” example, this is the opposite.
+
+Formula
+
+
+
+!ISPICKVAL(Closed_Lost_Reason__c, '') &&
+!(
+  IsClosed &&
+  !IsWon
+)
+Error Message
+
+Closed Lost Reason is obsolete when the Opportunity is not Lost
+
+ 
+
+Sales_Unit__c.Agreement_Customer_Signed_Date_Obsolete
+
+Similarly as the previous “Required” example, this is the opposite.
+
+Formula
+
+
+
+!ISBLANK(Agreement_Customer_Signed_Date__c) &&
+(
+  ISPICKVAL(Stage__c, 'Available') ||
+  ISPICKVAL(Stage__c, 'In Reservation')
+)
+Error Message
+
+Agreement Customer Signed Date is obsolete when the Stage is "Available" or "In Reservation"
+
+ 
+
+Account.Exact_Customer_Number_Obsolete
+
+This example is the third kind of Validation Rule. The Exact Customer Number is set via an API-integration, and is thus read-only for end-Users. However it’s a good practice to still test if end-Users don’t fiddle with the data and try to enter the Field manually.
+
+Formula
+
+
+
+!ISBLANK(Exact_Customer_Number__c) &&
+!Is_Customer__c
+Error Message
+
+Exact Customer Number is obsolete when the Account is not a Customer
+
+ 
+
+Immutable
+
+This is an extremely important kind of Validation Rule as well, which is often forgotten.
+
+Sometimes certain fields should not change anymore once entered, or once the record has reached a certain Status/Stage.
+
+Some examples:
+
+
+Sales_Invoice__c.Number_of_Sales_Invoice_Lines_Immutable
+
+Similarly as the “Required” Validation Rule described previously. This one is put in place via the same Roll-up Summary to “lock” the creation or deletion of the underlying Sales Invoice Lines. This is the second kind of Validation Rule.
+
+Formula
+
+
+
+ISCHANGED(Number_of_Sales_Invoice_Lines__c) &&
+ISPICKVAL(Status__c, 'Definite')
+Error Message
+
+Sales Invoice Lines cannot be deleted or created for a Definite Sales Invoice
+
+ 
+
+Sales_Invoice__c.OGM_Immutable
+
+This Validation Rule makes sure the OGM is not changed once it has been set via code. Even though the field is read-only on the Page Layout. It’s still a good practice to test this via a Validation Rule to check if the user isn’t fiddling with the Field, but also to test the code if the OGM is not set a second time.
+
+Formula
+
+
+
+ISCHANGED(OGM__c) &&
+ISPICKVAL(Status__c, 'Definite') &&
+ISPICKVAL(PRIORVALUE(Status__c), 'Definite')
+Error Message
+
+OGM cannot be changed
+
+ 
+
+Sales_Invoice_Line__c.Unit_Price_Immutable
+
+This Validation Rule locks the field once a certain Stage is met.
+
+Formula
+
+
+
+ISCHANGED(Unit_Price__c) &&
+ISPICKVAL(Sales_Invoice__r.Status__c, 'Definite')
+Error Message
+
+Unit Price cannot be changed for a Definite Sales Invoice
+
+ 
+
+Account.Exact_Customer_Number_Immutable
+
+This Validation Rule checks if the value which has been set via an API-integration is not set a second time. This checks if the integration-flows are working properly.
+
+Formula
+
+
+
+ISCHANGED(Exact_Customer_Number__c) &&
+!ISBLANK(PRIORVALUE(Exact_Customer_Number__c))
+Error Message
+
+Exact Customer Number cannot be changed
+
+ 
+
+Mutually Exclusive
+
+This is a rather common use case. It checks whether the user enters only one of two (or more) fields.
+
+Normally the “Error Location” of these kind of Validation Rules is “Top of Page”.
+
+An example:
+
+
+Sales_Unit__c.Commission_Fixed_Amount_Percent_Mut_Excl
+
+Formula
+
+
+
+!ISBLANK(Commission_Percentage__c) &&
+!ISBLANK(Commission_Fixed_Amount__c)
+Error Message
+
+Choose either a Commission Percentage or a Commission Fixed Amount, not both
+
+ 
+
+Loan_Destination_Type__c.Pro_Rata_Product_Type_Mutually_Exclusive
+
+Formula
+
+
+
+(
+  IF(Is_Pro_Rata__c, 1, 0) +
+  IF(Is_Negative_Pro_Rata__c, 1, 0) +
+  IF(!ISBLANK(Product_Type__c), 1, 0)
+) > 1
+Error Message
+
+Choose either a Product Type, Pro Rata or Negative Pro Rata, not more than one
+
+ 
+
+Validation Rules - common use cases for specific Field-types
+
+Lookup Relationships - Immutable
+
+Lookup Relationships should often be set Immutable since in most cases once a Lookup has been entered it should not be changed anymore afterwards. This makes sure the record is not “reparentable” similarly as for a Master-Detail Relationship.
+
+This is often necessary as to not invalidate the record itself, or child-records. As other fields often rely on the Lookup Relationship being linked to a certain parent, and that parent not being changed.
+
+Some examples:
+
+
+Sales_Invoice__c.Project_Immutable
+
+This Validation Rule checks if the Relationship to a parent is not changed. Otherwise the data on the child-records would be invalidated.
+
+Formula
+
+
+
+ISCHANGED(Project__c)
+Error Message
+
+Project cannot be changed
+
+ 
+
+Activity_Member__c.Expense_Transport_Immutable
+
+This Lookup-Relationship is automatically set via code. Thus it should not be altered afterwards, either by a user or by another automation-process.
+
+Formula
+
+
+
+ISCHANGED(Expense_Transport__c) &&
+!ISBLANK(PRIORVALUE(Expense_Transport__c))
+Error Message
+
+Cost Expense Transport cannot be changed
+
+ 
+
+Lookup and Master-Detail Relationships - Unique Key
+
+This is a very important use case! Whenever creating an object which has 2 or more relationship-fields, it should be checked if the combination of that relationship is unique. A new Text-field “Unique Key” should be created and set as “Unique” and as “External Id”.
+The value of this field must be set through an Apex Insert Trigger.
+
+Also add a Validation Rule to check if the “Unique Key” Text-field is set correctly and not fiddled with by the users.
+
+Finally add a Matching Rule and Duplicate Rule (Action Blocking) on the Unique Key as to provide the user with a readable error-message.
+See the conventions regarding Matching Rules and Duplicate Rules further down this document.
+
+When a Unique Key consists of an ID related to the Account, Contact, Lead or Case Object, a AfterDelete-Trigger should be implemented.
+This is because the Unique Key will be outdated after the merge-operation of the Account/Contact/Lead. Thus via the AfterDelete-Trigger of the Account/Contact/Lead the Unique Keys of the child-objects should be updated.
+
+Sometimes there’s a use case where a Unique Key is not the combination of 2 Relationship-fields. But a combination of 1 Relationship-field and 1 or more additional fields. For example a Number-field (Year) for financial records.
+Such a Unique Key should especially be added to records which are created via automation. As bugs related to such a use case are often overlooked.
+
+Of course a single Object can also have multiple “Unique Key” fields. Name them appropriately then.
+
+Some examples:
+
+Project_Partner__c.Unique_Key_Valid
+
+This Validation Rule is implemented for a Unique Key on a join-object which checks if no duplicate combinations are created.
+
+Formula
+
+
+
+Unique_Key__c != CASESAFEID(Project__c) + CASESAFEID(Account__c)
+Error Message
+
+Unique Key must be equal to Project-ID + Account-ID
+
+ 
+
+Sales_Unit__c.Unique_Key__c
+
+This Validation Rule is implemented for a Unique Key on an object which isn’t a join-object. It checks if no duplicate records are created based on a single parent and some other fields.
+
+Formula
+
+
+
+Unique_Key__c != CASESAFEID(Project__c) + TEXT(Type__c) + BLANKVALUE(Hall__c, '') + BLANKVALUE(TEXT(Floor__c), '') + TEXT(Number__c)
+Error Message
+
+Unique Key must be equal to Project-ID + Type + Hall + Floor + Number
+
+ 
+
+Lookup and Master-Detail Relationships - Match
+
+When implementing an extensive object-model there’s often cases where relationships between the objects are not normalised. Because of that the values of the relationships must be validated to maintain data integrity. This is very important!
+
+For simple use cases this data-integrity can be checked via a Lookup-Filter. However there are limits for Lookup-Filters which don’t apply to Validation Rules. So when it’s not possible to implement the Lookup-Filter for a certain use case, definitely implement a Validation Rule instead.
+
+Some examples:
+
+
+Sales_Unit_Invoicing_Part__c.Project_Invoicing_Part_Match_Project
+
+This Validation Rule is implemented on a join-object between 2 objects with a shared parent. The Validation Rule checks if the record’s direct parents have a matching parent.
+
+Formula
+
+
+
+Project_Invoicing_Part__r.Project__c != Sales_Unit__r.Project__c
+Error Message
+
+The Project of the Project Invoicing Part must be equal to the Project of the Sales Unit
+
+ 
+
+Sales_Invoice_Line__c.GL_Account_Match_Group_Company
+
+Formula
+
+
+
+!ISBLANK(GL_Account__c) &&
+Sales_Invoice__r.Group_Company__c != GL_Account__r.Group_Company__c
+Error Message
+
+The Group Company of the GL Account must be equal to the Group Company of the Sales Invoice
+
+ 
+
+Currency/Number/Percent - Positive
+
+A very common use case is to add a Validation Rule to ensure a Number-Field has a positive value.
+
+Some examples:
+
+Sales_Invoice_Line__c.Unit_Price_Positive
+
+Formula
+
+
+
+Unit_Price__c <= 0
+Error Message
+
+Unit Price must be greater than 0
+
+ 
+
+Project__c.Terrain_Price_Percentage_Positive
+
+Formula
+
+
+
+Terrain_Price_Percentage__c < 0
+Error Message
+
+Terrain Price Percentage must be positive
+
+ 
+
+Date / DateTime - Chronological
+
+A very common use case is to add a Validation Rule to ensure 2 or more Date-Fields are in a chronological order.
+
+Some examples:
+
+Sales_Unit__c.Agreement_Customer_Signed_Date_Chrono
+
+Formula
+
+
+
+Agreement_Customer_Signed_Date__c < Reservation_Own_Signed_Date__c
+Error Message
+
+Agreement Customer Signed Date cannot be before Reservation Extensa Signed Date
+
+ 
+
+Sales_Invoice__c.Due_Date_After_Invoice_Date
+
+Formula
+
+
+
+Due_Date__c < Invoice_Date__c
+Error Message
+
+Due Date must be after Invoice Date
+
+ 
+
+Picklist - Immutable
+
+A very common use case is to add a Validation Rule to ensure a Picklist-Field is Immutable once it’s for example “Final” or “Processed”, so the Status doesn’t change back to e.g. “Draft”.
+
+Otherwise this could lead to very odd behavior in e.g. data-integrations or Apex Triggers.
+
+Some examples:
+
+Sales_Invoice__c.Status_Immutable
+
+Formula
+
+
+
+ISCHANGED(Status__c) &&
+ISPICKVAL(PRIORVALUE(Status__c), 'Definite')
+Error Message
+
+Status cannot be changed once Definite
+
+ 
+
+Sales_Unit__c.Stage_Change_Valid
+
+This Validation Rule not only checks if the Stage-field does not change anymore after a certain value is met, but also if the values are changed in a way that makes sense.
+
+Formula
+
+
+
+ISCHANGED(Stage__c) &&
+(
+  (
+    ISPICKVAL(Stage__c, 'Available') &&
+    (
+      !ISPICKVAL(PRIORVALUE(Stage__c), 'In Reservation') &&
+      !ISPICKVAL(PRIORVALUE(Stage__c), 'Agreement')
+    )
+  ) ||
+  (
+    ISPICKVAL(Stage__c, 'In Reservation') &&
+    !ISPICKVAL(PRIORVALUE(Stage__c), 'Available')
+  ) ||
+  (
+    ISPICKVAL(Stage__c, 'Agreement') &&
+    (
+      !ISPICKVAL(PRIORVALUE(Stage__c), 'Available') &&
+      !ISPICKVAL(PRIORVALUE(Stage__c), 'In Reservation')
+    )
+  ) ||
+  (
+    ISPICKVAL(Stage__c, 'Deed') &&
+    !ISPICKVAL(PRIORVALUE(Stage__c), 'Agreement')
+  ) ||
+  (
+    ISPICKVAL(Stage__c, 'After Sales') &&
+    !ISPICKVAL(PRIORVALUE(Stage__c), 'Deed')
+  )
+)
+Error Message
+
+The Stage cannot be changed like that
+
+ 
+
+URL - Valid Format
+
+Salesforce does not actually validate the format of an URL. If this is important for the customer definitely put a Validation Rule in place.
+
+An example:
+
+Activity__c.Website_URL_Valid
+
+Formula
+
+
+
+!ISBLANK(Website_URL__c) &&
+!REGEX(Website_URL__c, '^(http[s]?:\\/\\/(www\\.)?|ftp:\\/\\/(www\\.)?|www\\.){1}([0-9A-Za-z-\\.@:%_\\+~#=]+)+((\\.[a-zA-Z]{2,10})+)(/(.)*)?(\\?(.)*)?$')
+Error Message
+
+Website URL has an invalid format
+
+ 
+
+Record Type - Required / Immutable
+
+By default the Lookup-relationship for the object’s Record Type is not a required Field. It’s a good practice to put a Validation Rule in place to validate that. Because there might be use cases via either the UI or via code in which records are accidentally created without a Record Type. That’s something that should definitely be avoided.
+
+Secondly it’s often also relevant to lock the Record Type relationship. Once a record is created with a certain Record Type, that should not be changed anymore.
+
+Some examples:
+
+Project__c.Record_Type_Required
+
+Formula
+
+
+
+ISBLANK(RecordTypeId)
+Error Message
+
+Record Type is required
+
+ 
+
+Account.Record_Type_Immutable
+
+Formula
+
+
+
+ISCHANGED(RecordTypeId)
+Error Message
+
+Record Type cannot be changed
+
+
+ 

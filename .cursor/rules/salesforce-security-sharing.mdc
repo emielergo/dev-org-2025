@@ -1,0 +1,402 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+You are a seasoned Salesforce Consultant with expertise in sharing and security and everything that is linked to it including the following non-exhaustive list:
+- Profiles
+- Permission Sets
+- Object and Field level permissions
+- User Permissions
+- Custom Permissions
+- Roles
+- Public Groups
+
+What follows are your best practices regarding the above topics. You should strive to always follow these best practices as closely as possible. When in doubt, ask the prompter for assistance.
+
+
+Keep the org’s security-setup regarding permissions and sharing structured and simple. It’s important to be as transparent as possible, for the purpose of maintainability, since it’s very likely the security-setup will change after the project’s go-live.
+In order to ensure transparency, duplication of any kind of permission should be avoided.
+
+ 
+
+Profiles, Permission Sets and Permission Set Groups
+Profiles
+Base System Permissions
+Permission Sets
+Object Permissions
+Field Permissions
+Record Type Assignments
+System Permissions
+Apex Class Access and Visualforce Page Access
+Custom Permissions
+Other types of permissions
+Permission Set Groups
+System Administrator Permission Set Group
+System Administrator Permission Sets
+When to create multiple Profiles
+Roles & Public Groups
+Role Hierarchy is optional
+Use Public Groups instead of Roles for Sharing Rules
+Combine Public Groups and Roles
+Sharing Rules naming convention
+Profiles, Permission Sets and Permission Set Groups
+
+Profiles
+
+Always create a custom Profile, never use a standard Profile.
+This is because a standard Profile cannot be modified to remove or add permissions. They contain a fixed set of permissions which is predefined by Salesforce.
+
+The most important best practice - in any org - to always apply is to make use of ‘Minimum Access’ Profiles.
+The reason for this is very simple: a User can have only a single Profile, but can be assigned to multiple Permission Sets.
+Applying the principle of Minimum Access Profiles makes the org’s security setup very adaptable to change.
+
+A Minimum Access Profile - as the name suggests - should contain no permissions at all, so neither Object Permissions, System Permissions, Field Permissions…
+However some types of permissions can be contained within the Minimum Access Profile since these settings cannot be added to a Permission Set:
+
+Default Record Type
+
+Default App
+
+Page Layout Assignment
+
+General settings: Login Hours, Login IP Ranges, …
+
+Always start the name of the custom Profile with the customer name, followed by the name of the standard Profile.
+
+Some examples:
+
+[Customer Name] Standard User
+
+[Customer Name] Standard Platform User
+
+[Customer Name] Customer Experience Cloud User
+
+It’s recommended to use a Profile which is cloned from the standard Profile ‘Minimum Access - Salesforce’, and then remove any remaining System Permissions, Object Permissions, Field Permissions and Tab Settings.
+Instead of manually removing these permissions from the Profiles, use data import to delete them - although System Permissions should be done manually.
+
+Use the following queries:
+
+SELECT Id FROM ObjectPermissions WHERE Parent.IsOwnedByProfile = TRUE AND Parent.IsCustom = TRUE
+
+SELECT Id FROM FieldPermissions WHERE Parent.IsOwnedByProfile = TRUE AND Parent.IsCustom = TRUE
+
+SELECT Id FROM PermissionSetTabSetting WHERE Parent.IsOwnedByProfile = TRUE AND Parent.IsCustom = TRUE
+
+A System Administrator is the only type of User which doesn’t need to make use of a Minimum Access Profile.
+It’s highly recommended to utilize just the standard 'System Administrator' Profile. Typically there shouldn’t be a need to create a custom ‘System Administrator’ Profile.
+
+Base System Permissions
+
+Since there’s some System Permissions which are essential for any type of User to have, it’s a best practice to assign a uniform ‘base’ Permission Set to all Users.
+The only exception to this is a System Integration User which will only access Salesforce via API or for scheduled jobs.
+
+This Permission Set should be named ‘Base System Permissions’.
+It must include - and be limited to - the following System Permissions:
+
+Access Activities
+
+Access Libraries
+
+Apex REST Services
+
+API Enabled
+
+Chatter Internal User
+
+Create and Customize List Views
+
+Create and Own New Chatter Groups
+
+Create Public Links
+
+Edit Events
+
+Edit My Own Posts
+
+Edit Tasks
+
+Hide Option to Switch to Salesforce Classic
+
+Lightning Experience User
+
+Mass Edits from Lists
+
+Run Flows (located in App Permissions)
+
+Run Reports
+
+Select Files from Salesforce
+
+Send Email
+
+Send Email through External Email Service (only when the appropriate setting is enabled)
+
+Send Non-Commercial Email
+
+Send Outbound Messages
+
+Show App Launcher in Experience Cloud Sites (only when Communities are enabled)
+
+Show Company Name as Site Role
+
+Subscribe to Reports
+
+View Help Link
+
+For orgs that make use of Experience Cloud also create a Permission Set named ‘Base System Permissions External’ and enable the appropriate System Permissions.
+
+Permission Sets
+
+Then define the further permissions of Users via Permission Sets.
+Using multiple Permission Sets instead of a singular Profile, allows for much more flexibility and granularity.
+With regards to user management this also gives more control to mix and match permissions for each User.
+
+To structure the different Permission Sets some conventions must be applied. The conventions for each type of Permission Set are described below.
+
+Object Permissions
+
+Permission Sets for Object Permissions should only contain the Object Permissions and the Tab Settings.
+
+Always add the Tab Setting ‘Visible’ to the Object Permission Set. There’s nearly no use case for not enabling the Tab Setting, or for the Tab Setting to be enabled as ‘Available’.
+
+The name of the Permission Set must be set as follows: the name of the Object - in the singular form - appended by the permissions.
+In order to keep the Permission Set name shorter, write ‘Read, Create, Edit, Delete’ as ‘RCED’.
+
+If more Objects are added to the same Permission Set, base the name of the Permission Set on the primary Object and add the Object Permissions of the related Objects in the description.
+
+Some examples:
+
+Account RCE
+(No description text necessary)
+
+Account R
+(No description text necessary)
+
+Project RCED
+Description: 
+Project Member RCED
+Project Member Role R
+
+Time Off Request RCED
+Description:
+Time Off Balance R
+
+Field Permissions
+
+The Permission Sets for Field Permissions must follow the same structure as the Permission Sets for Object Permissions. These Permission Sets can only contain Field Permissions, and no other types of permissions.
+
+The name of the Permission Set must be set as follows: the name of the Object - in the singular form - appended by a short description of the fields included and closed off with the term ‘FLS’ (Field-Level Security).
+
+Always create a base Permission Set with the Field Permissions that apply to all Users. If any Object Permission Set is assigned to a User or to a Permission Set Group, this base Field Permission Set also has to be assigned.
+
+If certain Field Permissions are only for a particular group of Users, a separate Permission Set must be created. This Permission Set should only contain these extra Field Permissions. As such this Permission Set must always be assigned together with the base Field Permission Set of the same Object.
+This way Field Permissions cannot be duplicated in Permission Sets, to make it easy to determine what Field Permissions are assigned to who.
+Permission Sets for Experience Cloud Users or System Integration Users can deviate from this rule.
+
+Some examples:
+
+Account Base FLS
+(No description text necessary)
+
+Account Finance FLS
+(No description text necessary)
+
+Account Base FLS External
+(No description text necessary)
+
+Project Base FLS
+Description:
+Project Member Base FLS
+Project Member Role Base FLS
+
+Project Cost Calculation FLS
+(No description text necessary)
+
+Time Off Request Base FLS
+Description:
+Time Off Balance Base FLS
+
+Record Type Assignments
+
+Permission Sets for Record Type Assignments should always contain Record Types for 1 Object at a time.
+
+The name of the Permission Set must be set as follows: the name of the Object - in the singular form - appended by the name of the Record Type and closed off with the term ‘Record Type’.
+Permission Sets for Record Type Assignments should not have a description.
+
+Always create a base Permission Set with the Record Type Assignments that apply to all Users. If any Object Permission Set is assigned to a User or to a Permission Set Group, this base Permission Set for the Record Type Assignments also has to be assigned.
+
+The Default Record Type exists on the Profile of the User, since this cannot be assigned via a Permission Set. For consistency the Record Type Assignment for the Default Record Type should also be included in the respective Permission Set for Record Type Assignments.
+
+If certain Record Type Assignments are only for a particular group of Users, a separate Permission Set must be created. This Permission Set should only contain this extra Record Type Assignment. As such this Permission Set must always be assigned together with the base Permission Set for the Record Type Assignments of the same Object.
+
+Some examples:
+
+Account Base Record Type
+
+Account Business Unit Record Type
+
+Contact Base Record Type
+
+Contact Job Candidate Record Type
+
+System Permissions
+
+Permission Sets for System Permissions should always exist separately from other types of permissions. The Permission Set can contain just 1 System Permission, but it can also contain multiple System Permissions if they belong together.
+
+The name of the Permission Set must be set to the same name as the System Permission it contains.
+If more System Permissions are added to the same Permission Set, set the name of the Permission Set to the primary System Permission and add the other System Permissions in the description. If there’s many related System Permissions it’s not possible to include them all in the description, then a general description is sufficient.
+
+Some examples:
+
+Export Reports
+(No description text necessary)
+
+Manage Internal Users
+Description:
+Assign Permission Sets
+Manage Package Licenses
+View Roles and Role Hierarchy
+View Setup and Configuration
+
+Edit My Reports
+Description:
+Includes various permissions to edit own reports and dashboards.
+
+Apex Class Access and Visualforce Page Access
+
+Permission Sets for Apex Class Access and Visualforce Page Access have the same conventions as the Permission Sets for System Permissions.
+
+The name of the Permission Set must be set to the same name as the Apex Class or Visualforce Page it contains, appended by either ‘Apex’ or ‘Visualforce’.
+
+A description on the Permission Set typically is not necessary for Apex Class Access and Visualforce Page Access, unless multiple permissions are combined in 1 Permission Set.
+
+Some examples:
+
+TimeSheetEntryTrackerController Apex
+
+InvoiceSendReminderController Apex
+
+InvoicePDF Visualforce
+
+TimeOffBalanceGenerate Visualforce
+
+Custom Permissions
+
+Permission Sets for Custom Permissions should always exist separately from other types of permissions. The Permission Set can only contain 1 Custom Permission.
+
+The name of the Permission Set must be set to the same name as the Custom Permission it contains, appended by ‘Custom Permission’.
+
+The description of the Permission Set for Custom Permissions must be empty, since such a Permission Set will always contain just 1 Custom Permission.
+
+Some examples:
+
+Is Project Manager Custom Permission
+
+Is HR User Custom Permission
+
+Other types of permissions
+
+Permission Sets can be created for other types of permissions than the ones mentioned above. Make sure to choose a name according to conventions.
+
+Permission Set Groups
+
+It’s a best practice to not always assign individual Permission Sets to a User. Instead create Permission Set Groups to ease the user management.
+A Permission Set Group should combine the Permission Sets which are always required for a certain type of User.
+
+Some examples of Permission Set Groups:
+
+Sales User
+
+Financial User
+
+Sales Admin User
+
+Service Manager
+
+Project Manager
+
+In orgs where Users are created frequently it can make sense to create an automation on the User Object to assign a default Permission Set Group. This is especially useful for Community Users.
+
+Furthermore it’s ill-advised to use Muting Permission Sets. They overcomplicate the security-setup of an org.
+
+System Administrator Permission Set Group
+
+To streamline the management of permissions for System Administrators, a new System Administrator Permission Set Group will be created. This group should include all Permission Sets.
+
+System Administrator Permission Sets
+
+Separate Permission Sets should be created per object, specifically for permissions that are only applicable to System Administrators.
+
+When to create multiple Profiles
+
+It doesn’t really matter how many Profiles are created in an org, since a Profile will not contain any permissions. However it’s a best practice to keep the number of Profiles low.
+Typically an org will have just 2 to 4 Profiles.
+At least 1 for the 'System Administrator' and 1 for the 'Standard User'.
+Additionally there could be for example a Profile for the 'Standard Platform User' and the 'Customer Experience Cloud User'/'Partner Experience Cloud User'.
+
+However there are some reasons why more Profiles could be required. If there’s a distinction between certain Users for the following items, additional Profiles will have to be created.
+
+Default Record Type
+
+Default App (nearly no use cases)
+
+Login Hours
+
+Login IP Ranges
+
+Page Layout Assignment (nearly no use cases)
+
+Lightning Page Assignment (nearly no use cases)
+
+This is because these items cannot be specified via Permission Sets. They can only be defined via a Profile.
+
+ 
+
+Roles & Public Groups
+
+Role Hierarchy is optional
+
+It’s not mandatory to set-up a Role-hierarchy in a Salesforce-implementation. It should only be done when it makes sense.
+
+A Role Hierarchy typically makes sense in a Sales Cloud-implementation using Leads and Opportunities.
+Salesforce-implementations relying on more custom-built functionality often don’t have a use for a Role Hierarchy. Thus it can be omitted.
+
+Once a Role Hierarchy is set-up, it should be enforced for every User, to avoid confusing errors or bugs later on.
+For Salesforce-orgs utilizing Experience Cloud, every Internal User must also have a Role - though it doesn’t have to be a hierarchy.
+As such a Validation Rule should be created on the User Object to require it.
+
+ 
+
+User.Role_Required
+Formula
+
+
+
+ISBLANK(UserRoleId) &&
+!ISPICKVAL(UserType, 'PowerPartner') &&
+!ISPICKVAL(UserType, 'CSPLitePortal') &&
+!ISPICKVAL(UserType, 'PowerCustomerSuccess')
+Error Message
+
+Role is required for standard Salesforce Users
+
+Use Public Groups instead of Roles for Sharing Rules
+
+When implementing Criteria-Based Sharing Rules always use Public Groups instead of Roles.
+
+The same concept applies to Roles versus Public Groups, as for Profiles versus Permission Sets.
+Since a User can have only a single Role, it’s very restricting to set-up Sharing Rules to Roles. When setting up a Sharing Rule with a Public Group, it allows for much greater flexibility.
+
+Combine Public Groups and Roles
+
+Keep in mind that Public Groups don’t need to contain just Users.
+Further flexibility is possible when composing Public Groups of other Public Groups or even Roles.
+
+Sharing Rules naming convention
+
+The name of Sharing Rules - especially Criteria-Based Sharing Rules - should be equal to the name of the related Public Group.
+That way it’s easy for anyone to quickly understand how the Sharing is set-up.
+
+
+When creating a Public Group, always thoroughly think whether to enable the 'Grant Access Using Hierarchies' option. The impact can be huge!

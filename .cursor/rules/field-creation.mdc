@@ -1,0 +1,362 @@
+---
+description: 
+globs: force-app/main/default/objects/**/fields/*.xml
+alwaysApply: false
+---
+You are a seasoned Salesforce Consultant with expertise in custom field creation
+
+When asked to create or edit a field, you create or edit the necessary metadata file to resemble the requirements.
+The file is located in the following folder force-app\main\default\objects\OBJECT_API_NAME
+What follows are your best practices regarding objects. You should strive to always follow these best practices as closely as possible. When in doubt, ask the prompter for assistance.
+ 
+
+Creation of Custom Fields
+
+Take time to choose a good name!
+
+When deciding upon a name for a new Custom Field the same conventions apply as for Custom Objects.
+
+Some examples:
+
+“Terrain Tax Percentage” is better than just “Terrain Tax”. As to not confuse the User during input.
+
+“Closed Lost Reason” is better than “Reason Closed Lost”. The noun should be the last word in the label.
+
+“Number of Bedrooms” is better than “Bedrooms” or “Nr of Bedrooms”. Again be verbose about the output of the field as to avoid confusion. Also avoid abbreviations, unless the label would otherwise be too long (limit is 40 characters).
+
+“Termination of Employment Date” is better than “Termination of Employment”. That way it’s clear the field is of type Date.
+
+“Reservation Customer Signed Date” is better than “Reservation Sign Date of Customer”. The noun/type should be the last word in the label.
+
+“Activity Rate Default Type” is better than “Default Type for Rate of Activity”
+
+“Suspensive Conditions Description” is better than “Description Suspensive Conditions”
+
+ 
+
+API-Name 
+
+As with any type of configuration the API-Name suggested based on the Label should be kept. There is however one exception for Checkbox-Fields.
+
+ 
+
+Name for Checkbox Fields
+
+For Checkbox Fields always start the API-Name with a verb. For developers this sounds familiar as the same principle applies in code. The reasoning behind this is to make the code/formulas as understandable/readable as possible, especially when using IF-structures.
+In the Label the verb can often be omitted.
+
+Some examples:
+
+Label “Credit Note” and an API-Name “Is_Credit_Note__c”
+
+Label “Customer Approval” and API-Name “Has_Customer_Approval__c”
+
+Label “Delivered” and API-Name “Is_Delivered__c”
+
+Label “Sufficient Participants” and API-Name “Has_Sufficient_Participants__c”
+
+Label “Multiple Contacts” and API-Name “Contains_Multiple_Contacts__c”
+
+Sometimes the Label and API-Name can be the same.
+
+Some examples:
+
+“Ignore Validation” as a Label, and the API-Name being “Ignore_Validation__c”
+
+“Allow Deletion” as a Label, and the API-Name being “Allow_Deletion__c”
+
+ 
+
+Add Help Text to explain the automations, calculations, ..
+
+Try to add a Help Text for almost every Field, and describe it as clearly as possible. However do not describe obvious statements which can be deduced from the Field Label.
+
+Since there’s a limit on the number of characters in a Help Text the most important things should definitely be explained. Oftentimes these are certain automations which the Field triggers that happen in Apex or Workflow. For read-only Fields it’s often how its value is calculated via Apex or a Formula.
+
+Even though the characters in a Help Text are limited, keep the sentences easily readable. 
+Use full sentences, not abbreviations or shortened sentences without punctuation.
+
+When functionality surrounding the Field is implemented later on, do not forget to also update the Help Text to reflect that!
+For example when an automation via an Apex Trigger is implemented in a second project-sprint on a Field which already exists since the first sprint. That automation should also be explained in the Help Text of that Field.
+
+Some examples:
+
+“Closed Lost Reason” on “Opportunity”:
+The most important Reason must be given when the Opportunity is Lost.
+When entering a Closed Lost Reason the Opportunity Stage is automatically set to Closed Lost.
+
+“Stage” on “Sales Unit”:
+When Stage is set back to Available, a "Cancelled Sale" will be created. All relevant fields will be copied there and cleared on the Sales Unit itself.
+The Owner is also set back to the Project Owner.
+Don't forget to adjust the Stage of the Opportunity!
+
+“Construction Price” on “Sales Unit”:
+The Construction Price is calculated based on the List Price multiplied by the Construction Price Percentage on Project.
+
+“Participation Evaluation Date” on “Activity”:
+The date at which the Participation Evaluation email will be automatically sent to all Definite Participants. By default this date is equal to the End of Last Draft/Definite Activity Session plus the configured amount of days in the Activity Parameters.
+
+“Budgeted Cost” on “Activity”:
+The Sum of the Budgeted Amount of the related Expenses of Type Cost.
+
+ 
+
+Description not needed
+
+A Description on Field-level should be rarely entered. The Field Label and Help Text should be self-explanatory already, which renders a Description obsolete.
+
+Entering a Description for every Field would slow down the implementation too much for little added value.
+
+ 
+
+Mark Field as Required when it’s always so
+
+Only when a Field will certainly always be required, it can be marked as “Required” on the Field-level. However most of the time a Field will be required based on a condition. For example when the record is in a certain Stage/Status.
+
+Conditional requiredness is implemented via Validation Rules which are described later.
+
+ 
+
+Apply Visibility of the Field to all Profiles by default
+
+In most cases when a new Field is created, it should be visible for all Users with access to the Object. Thus enable the Visibility of the Field for all Profiles, not just the ones selected by default.
+Unless when it’s for example a confidential Field which should not be visible/editable by all Users.
+
+This will save some hassle later on when setting up the different Profiles and Permission Sets.
+
+Obviously when a User does not see the Object they will also not see any of the Fields on that Object. So for most Fields it makes sense to make it Visible for all Profiles, and give access to the Object via a Permission Set.
+More on that in a following “Best Practices’-document.
+
+ 
+
+Save, and give the new Field a proper place on the necessary Page Layouts
+
+Don’t just add the new Field to all of the Page Layouts, but only to the necessary ones.
+After saving the shiny new Field, immediately edit the Page Layout to move it to a relevant place. See some conventions regarding Page Layouts further down this document.
+Don’t just leave the Field on the default place!
+
+ 
+
+Creation of Custom Fields - follow-up steps
+
+Enable History Tracking for the new Field
+
+Don’t forget to enable History Tracking each time a new Field is created. It can come in handy for logging purposes later on, and the customer will also be happy to see how their Users interact with the data.
+
+Try to always enable History Tracking for the maximum of 20 Fields on each Object. For large Objects make a good decision on what the 20 most essential Fields to track are.
+
+Keep in mind that History Tracking is saved for only 18 months. So do not use this feature for permanent logging of data-changes. It’s possible to retain History Tracking for up to 10 years via an extra license.
+
+ 
+
+Update the Object’s Search Layouts
+
+Similarly to updating the Object’s History Tracking, also update the Search Layouts of the Object.
+There’s a maximum of 10 columns to be displayed in a Search Layout. Again make a good decision which 10 Fields are the most important. The order in which these Fields are chosen is also important.
+
+Some guidelines:
+
+The standard Name-Field should always be the first column, and the standard “Last Modified Date”-Field should always be the last column.
+
+In between choose 8 more Fields which are most essential to be displayed.
+
+It’s a good convention to set the Master-detail Field(s) first as well as any Stage/Status Field(s) second. Thereafter add other important Fields such as Lookup-Fields or critical Currency-Fields. Also add the Owner-field as second-to-last, when relevant.
+
+Also set the Tab Search Layout in Salesforce Classic to make sure that the default columns of the related lists are automatically populated, based on this configuration. All other Search Layouts are no longer relevant in Lightning.
+
+When the Search Layouts are configured initially, any related lists added for the Object-type will automatically use these columns as default.
+Also when updating the Search Layouts later on, automatically all existing related lists for the Object-type will be kept in “sync”.
+
+ 
+
+Update the Object’s List Views according to the Search Layouts
+
+To achieve uniformity in the application, and familiarity for the User, also update the List Views to contain the same columns as the Search Layouts.
+
+Always start with creating or updating the “All”-List View. When this List View has the correct columns it’s easy to clone it for additional List Views without the hassle of having to select the columns each time.
+
+A List View is limited to 15 columns whereas a Search Layout is limited to 10 columns. So when required by the customer additional columns can be added. However try to keep the number of columns to a maximum of 10, otherwise the columns will become very small.
+
+ 
+
+Update the Object’s Compact Layout
+
+Create a Compact Layout for every Object. Add the most important Fields similarly to the columns of the Search Layouts. However the maximum here is 7 Fields, so compromises must be made. Address and Phone Fields are merged in the Compact Layout, so more than 7 can be displayed that way.
+
+Do not forget to also assign the Compact Page Layout as a System Default!
+A different Compact Layout can be created for every Profile. However try to avoid this to keep the implementation maintainable.
+
+Name the Compact Layout “Object Name Compact Layout”.
+
+The Compact Layout is displayed in the Highlights Panel in Lightning Experience. The first 5 Fields of the Compact Layout are also displayed on Lookup-hovers.
+So it’s very important to take time to configure a meaningful Compact Layout as this will definitely improve the overall user-friendliness!
+
+
+Creation of Custom Fields - general advice for each Field-type
+
+Auto Number
+
+Only use the “Auto Number” Field Type when the customer understands the consequences. E.g. it’s possible there will be gaps in the auto-numbering, there’s also no possibility for grouping on e.g. year/type, no possibility for a reset etc.
+Instead use the AutoNumber-feature of the Benson-framework to ensure a robust Auto Number Custom Field.
+
+Formula
+
+Generally keep in mind that Formula-fields are not searchable - via the Global Search - because those fields are not indexed! If that is a necessity the field should be created via an Apex Trigger.
+
+Also try to avoid using Formula-fields which access a parent-relationship (__r).
+
+This has several limitations:
+
+When the Field is updated due to a change on the parent, the record itself is not triggered.
+
+Roll-Up Summary Fields cannot be created based on such a Formula-Field
+
+It impacts application performance when there’s many Formula-Fields which access parent-relationships.
+
+Roll-Up Summary
+
+It is encouraged to use a Roll-Up Summary Field instead of having to code the calculation via Apex. This is more performant.
+However do not exaggerate using this type of Field. A Roll-Up Summary Field can often be replaced by a Report on the Record-Page.
+
+Lookup Relationships
+
+There is lots to consider before creating either a Lookup Relationship or a Master-Detail Relationship. The main reason to choose a Master-Detail instead of a Lookup should be the security (Sharing is Controlled By Parent). The reason should not be that:
+
+it’s automatically a required field
+
+the child-records are automatically deleted
+
+Roll-Up Summary Fields can be created via the Master-Detail
+
+The aspect of Sharing has the highest impact, so that should be the main reason to choose between a Lookup Relationship or a Master-Detail Relationship.
+Also understand the difference between a primary Master-Detail Relationship and a secondary Master-Detail Relationship.
+
+Take time to think through the design of the Object-Relationships! This is the basis of the implementation and impacts many aspects of the application.
+
+ 
+
+Field Label
+
+In most cases keep the suggested Field Label. The suggestion is equal to the related Object Name. Only when an Object has multiple Lookup Relationships to the same Object Type, it should be necessary to change the suggested Field Label.
+
+ 
+
+What to do if the lookup record is deleted?
+
+In 99% of the cases always choose “Don't allow deletion of the lookup record that's part of a lookup relationship.”.
+The default-selected “Clear the value of this field. You can't choose this option if you make this field required.” is not a good option in most cases since it can cause large problems regarding data-integrity.
+
+So do not forget to always change this option!
+
+ 
+
+Lookup Filter
+
+Always consider configuring a meaningful Lookup Filter. This is often the case to maintain data-integrity in a join-object with a shared parent-relationship.
+
+Keep in mind the limitations of the relationships which can be traversed in a Lookup Filter.
+When a Lookup Filter is too limiting, a Validation Rule should be created instead. More on that further down.
+
+There is also a button “Insert Suggested Criteria”. The suggested Filter(s) work rather well, so definitely try it/them out.
+
+Do not forget to also add a relevant Error Message, similarly as for Validation Rules. The default suggested Error Message is much too general for an end-User.
+
+When the Lookup Filter is based on a parent-Field which is not read-only or immutable, an Apex Trigger should be coded on the parent-Object to validate the children upon change of that Field. This principle applies also for Validation Rules which are based on a parent-Field.
+
+ 
+
+Child Relationship Name
+
+Make sure the Child Relationship Name is configured well. This Name has an impact in the Apex-code. Most of the time the suggested Child Relationship Name is fine.
+
+However when creating a second Lookup or Master-Detail relationship to the same parent-Object, the Child Relationship Name is often appended with an index.
+E.g. “Projects__r”, “Projects1__r” an “Projects2__r”.
+
+This is obviously a bad naming convention and should be changed to for example:
+“Projects”, “Projects_as_Construction_Company__r”, “Projects_as_Terrain_Company__r”.
+
+ 
+
+Related List Label
+
+The suggested Related List Label is often a good one. Only change it when really needed.
+
+ 
+
+Add Related List to Page Layouts
+
+Watch out with blindly adding the related list to all Page Layouts!
+Make sure to only add it to Page Layouts where it makes sense. And consider not adding the related list to any Page Layouts at all when it is not relevant for an end-User.
+
+After saving the Relationship Field update all relevant Page Layouts to place the related list in a logical order.
+Do this immediately since it’s something that’s often forgotten.
+
+Also consider removing the standard “New”-button on the related list(s), for example for related records which are created through an automation-process.
+
+Master-Detail Relationship
+
+A lot of the guidelines for a Lookup Relationship apply to a Master Detail Relationship as well.
+E.g. the Lookup Filter, the Child Relationship Name, related list for Page Layouts, ..
+
+ 
+
+Do not enable “Allow reparenting”
+
+One additional aspect for Master-Detail Relationships is the option to enable “Allow reparenting”. There’s almost not a single use case for this functionality. So just don’t enable it unless you really know what you’re doing!
+
+ 
+
+Delete the automatic Custom Report Type
+
+When creating a Master-Detail Relationship on an Object which is at the third or fourth level Salesforce will automatically generate a Custom Report Type for that Object-structure.
+
+Immediately delete such Custom Report Type since they aren’t needed 99% of the time, and are immediately outdated because of Fields which are added afterwards.
+
+Checkbox
+
+Instead of creating a Checkbox-field, consider creating a Picklist-field with values “Yes” and “No”. That way it’s clearer if an end-user selected “false” explicitly. The Picklist-field can be set required also (either on field-level or via a Validation Rule).
+
+Currency/Number/Percent
+
+Most of the time just choose the maximum total length of 18 digits. Unless it’s really needed to have a limit on the number of digits to the left of the decimal point.
+
+Some examples
+
+For a Currency-Field use 16 for the “Length” and 2 for the “Decimal Place”
+
+For a Percent-Field use 3 for the “Length” and 4 for the “Decimal Place”
+
+For a Number-Field use 18 for the “Length” and 0 for the “Decimal Place”
+
+..
+
+Picklist
+
+Always use “Restrict picklist values” unless it’s really required otherwise for certain edge cases (e.g. data integration/migration of non-critical values).
+
+The moment it’s needed to reuse some Picklist Values, promote the original Picklist to a Global Picklist so it can be reused. Never copy-paste Picklist Values!
+
+Picklist (Multi-Select)
+
+Be aware of the limitations of a Multi-Select Picklist before deciding to create such a Field!
+
+Some limitations:
+
+It’s impossible to group by the individual values in a Report/Dashboard
+
+They are harder to use in Workflow/Process Builder
+
+They are also harder to use in Formula Fields
+
+They cannot be used for Dependent Picklists
+
+..
+
+Text
+
+Always choose to use the maximum character limit of 255. Unless it’s really required to have a predefined limit for the text-value.
+
+Text Area (Long/Rich)
+
+Increase the suggested character limit from 32768 to the maximum character limit of 131072. Only when the object-limit is hit, lower the character limit of the individual fields.
+
