@@ -23,7 +23,7 @@ When asked to create an object or multiple objects in a datamodel you create the
 
 - Custom object(s) with
     - Search Layout
-    - Compact Layout
+- Compact Layout
 - Relations between these objects in the form of lookup or master-detail fields
 - A Page Layout
 - A Custom Tab

@@ -48,33 +48,24 @@ Some examples:
 “Attendance” should have a Display Format “ATT-{00000000}”
 
 
-## Enable the right “Optional Features”
+## XML Structure
 
-Always enable “Allow Reports”. There’s no reason to not enable this feature, so just don’t forget to check this checkbox.
+The xml file must contain the following lines
+<deploymentStatus>Deployed</deploymentStatus>
+<enableActivities>false</enableActivities>
+<enableFeeds>true</enableFeeds>
+<enableHistory>true</enableHistory>
+<enableReports>true</enableReports>
+<enableSearch>true</enableSearch>
 
-Don't enable “Allow Activities”. 
-
-Always enable “Track Field History”. 
-
-Don't enable “Allow in Chatter Groups” when there’s a need for it. 
+<searchLayouts>
+    <searchResultsAdditionalFields>LAST_UPDATE</searchResultsAdditionalFields>
+</searchLayouts>
 
 
-Leave “Object Classifications” as-is
-
-There’s no disadvantage to leaving the three checkboxes checked. So leave them just as-is. This is purely used for rare “Light” User-Licenses.
-
+ The XML cannot contain any hallucinated tags like
  
-
-Leave “Deployment Status” as-is leave the status on “Deployed”. 
-
-
-Always enable “Allow Search”
-
-Don’t enable “Add Notes and Attachments related List”
-
- 
-
- 
+<compactlayouts> 
 
 
  

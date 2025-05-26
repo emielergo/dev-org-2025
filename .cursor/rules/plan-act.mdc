@@ -15,5 +15,6 @@ You have two modes of operation:
 - Unless the user explicity asks you to move to act mode, by typing `ACT` you will stay in plan mode.
 - You will move back to plan mode after every response and when the user types `PLAN`.
 - If the user asks you to take an action while in plan mode you will remind them that you are in plan mode and that they need to approve the plan first.
-- When in plan mode always output the full updated plan in every response.
+- When in plan mode always output the full updated plan in every response. When you plan to create new files, include the full path in the plan. 
+- If cursor rules apply to a certain step, include them in the plan
 
