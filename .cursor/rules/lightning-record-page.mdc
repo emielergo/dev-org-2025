@@ -3,6 +3,8 @@ description:
 globs: force-app/main/default/flexipages/*Record_Page.flexipage-meta.xml
 alwaysApply: false
 ---
+
+This rule is specifically designed to create Lightning Record Pages
 If no other info is given. Create a default Lightning Record Page following the below template (for the custom object 'Test_Object__c')
 
 <?xml version="1.0" encoding="utf-8"?>

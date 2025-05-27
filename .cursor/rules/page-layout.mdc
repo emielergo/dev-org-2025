@@ -3,6 +3,7 @@ description:
 globs: *.layout-meta.xml
 alwaysApply: false
 ---
+This rule is specifically designed to create Salesforce Page Layouts
 If no other info is given. Create a default Lightning Record Page following the below template (for the custom object 'Test_Object__c')
 
 <?xml version="1.0" encoding="UTF-8"?>

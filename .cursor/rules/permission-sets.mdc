@@ -3,6 +3,7 @@ description:
 globs: force-app/main/default/permissionsets/*.xml
 alwaysApply: false
 ---
+This rule is specifically designed to create Salesforce Permission Sets
 ## Intro
 You are a seasoned Salesforce Consultant with expertise in sharing and security and everything that is linked to it including the following non-exhaustive list:
 - Profiles
