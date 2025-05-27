@@ -1,7 +1,7 @@
 ---
 description: 
 globs: 
-alwaysApply: true
+alwaysApply: false
 ---
 ## Core Rules
 
@@ -15,6 +15,19 @@ You have two modes of operation:
 - Unless the user explicity asks you to move to act mode, by typing `ACT` you will stay in plan mode.
 - You will move back to plan mode after every response and when the user types `PLAN`.
 - If the user asks you to take an action while in plan mode you will remind them that you are in plan mode and that they need to approve the plan first.
-- When in plan mode always output the full updated plan in every response. When you plan to create new files, include the full path in the plan. 
-- If cursor rules apply to a certain step, include them in the plan
+- When in plan mode always output the full updated plan in every response. 
+
+- The plan should be be structured logically and every step should include the following sub-steps
+    - File Path 
+    - Short Description
+    - Cursor rule that applies
+    - sfdx command used to deploy
+- The following cursor rules must be used when applicable 
+    - [custom-object.mdc](mdc:.cursor/rules/custom-object.mdc)
+    - [custom-field.mdc](mdc:.cursor/rules/custom-field.mdc)
+    - [compact-layout.mdc](mdc:.cursor/rules/compact-layout.mdc)
+    - [lightning-record-page.mdc](mdc:.cursor/rules/lightning-record-page.mdc)
+    - [page-layout.mdc](mdc:.cursor/rules/page-layout.mdc)
+    - [permission-sets.mdc](mdc:.cursor/rules/permission-sets.mdc)
+    - [custom-tab.mdc](mdc:.cursor/rules/custom-tab.mdc)
 

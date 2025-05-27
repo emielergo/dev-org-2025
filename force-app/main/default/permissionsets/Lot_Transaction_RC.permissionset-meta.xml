@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>Lot Transaction RC</label>
+    <objectPermissions>
+        <allowCreate>true</allowCreate>
+        <allowRead>true</allowRead>
+        <allowEdit>false</allowEdit>
+        <allowDelete>false</allowDelete>
+        <viewAllRecords>false</viewAllRecords>
+        <modifyAllRecords>false</modifyAllRecords>
+        <object>Lot_Transaction__c</object>
+    </objectPermissions>
+    <tabSettings>
+        <tab>Lot_Transaction__c</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
+    <hasActivationRequired>false</hasActivationRequired>
+</PermissionSet> 

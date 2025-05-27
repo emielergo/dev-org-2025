@@ -30,3 +30,13 @@ When asked to create an object or multiple objects in a datamodel you create the
 - A Lightning Record Page
 - Object Level permission set
 - Fiel Level permission set
+
+When you think a file is finished, you try and deploy it with the following command:
+sfdx force:source:deploy -p "path/to/your/file"
+Only when the deploy executes successfuly, do you go on to the next file.
+
+Example:
+If you want to deploy MyClass.cls, which is located in force-app/main/default/classes/MyClass.cls, the command would be:
+Code
+
+sfdx force:source:deploy -p "force-app/main/default/classes/MyClass.cls"

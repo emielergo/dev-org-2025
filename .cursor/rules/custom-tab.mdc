@@ -1,0 +1,22 @@
+---
+description: 
+globs: force-app/main/default/tabs/*.tab-meta.xml
+alwaysApply: false
+---
+This is a cursor rule to explicitly create a custom tab for a Salesforce object.
+
+File Naming Convention: OBJECT_NAME.tab-meta.xml
+
+Example:
+New custom object: 'Test Object'
+
+File name: Test_Object__c.tab-meta.xml
+
+Custom tab xml
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomTab xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customObject>true</customObject>
+    <motif>Custom70: Handsaw</motif>
+</CustomTab>
+
+
