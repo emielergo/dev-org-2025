@@ -1,0 +1,15 @@
+<!-- force-app/main/default/objects/Car__c/fields/Number_of_Doors__c.field-meta.xml -->
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Number_of_Doors__c</fullName>
+    <description>Number of doors in the car</description>
+    <externalId>false</externalId>
+    <label>Number of Doors</label>
+    <precision>2</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>true</trackHistory>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>
