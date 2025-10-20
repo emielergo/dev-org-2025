@@ -1,0 +1,9 @@
+<!-- force-app/main/default/objects/Car__c/searchLayouts/Car__c-Car Search Layout.searchLayout-meta.xml -->
+<?xml version="1.0" encoding="UTF-8"?>
+<SearchLayout xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customTabListAdditionalFields>LastModifiedDate</customTabListAdditionalFields>
+    <listViewButtons>New</listViewButtons>
+    <lookupDialogsAdditionalFields>LastModifiedDate</lookupDialogsAdditionalFields>
+    <lookupPhoneDialogsAdditionalFields>LastModifiedDate</lookupPhoneDialogsAdditionalFields>
+    <searchResultsAdditionalFields>LastModifiedDate</searchResultsAdditionalFields>
+</SearchLayout>
